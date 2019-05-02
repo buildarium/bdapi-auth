@@ -1,0 +1,24 @@
+version: '3'
+services:
+  bdapi-auth:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    volumes:
+      - './:/app'
+    links:
+      - db
+    ports:
+      - "5205:80"
+    environment:
+      - ENV=dev
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postup
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
