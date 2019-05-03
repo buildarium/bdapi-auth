@@ -17,6 +17,8 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: postup
+    ports:
+      - 5432:5432
   adminer:
     image: adminer
     restart: always
