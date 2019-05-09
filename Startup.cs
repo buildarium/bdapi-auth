@@ -29,7 +29,8 @@ namespace bdapi_auth
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<UserService>(options =>
-               options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+               options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
+            );
             services.AddMvc();
         }
 

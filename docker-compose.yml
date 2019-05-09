@@ -24,3 +24,11 @@ services:
     restart: always
     ports:
       - 8080:8080
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    links:
+      - db
+    entrypoint: [ "./wait-for-it/wait-for-it.sh", "db:5432", "--", "dotnet", "ef", "database", "update" ]
+    
