@@ -35,8 +35,15 @@ namespace bdapi_auth.Controllers
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] User usr)
         {
+            _userService.Add(new User {
+                Email = usr.Email,
+                FirstName = usr.FirstName,
+                LastName = usr.LastName,
+                Password = usr.Password
+            });
+            _userService.SaveChanges();
         }
 
         // PUT api/values/5
