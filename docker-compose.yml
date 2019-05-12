@@ -12,6 +12,8 @@ services:
       - "5205:80"
     environment:
       - ENV=dev
+    env_file:
+      - .env
   db:
     image: postgres
     restart: always

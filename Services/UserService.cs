@@ -9,6 +9,13 @@ namespace bdapi_auth.Services
         {
         }
         public DbSet<User> Users { get; set; }
+        public DbSet<AuthorizationToken> AuthorizationTokens { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .HasIndex(u => new { u.Email, u.Username })
+                .IsUnique();
+        }
     }
 }
