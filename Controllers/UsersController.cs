@@ -83,7 +83,7 @@ namespace bdapi_auth.Controllers
             var htmlContent = "<strong>Confirm your email by visiting this link:</strong> https://app.buildarium.com/confirm/" +
                 EmailToken;
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-            //var response = client.SendEmailAsync(msg);
+            var response = client.SendEmailAsync(msg);
         }
 
         // POST auth/signin
@@ -209,7 +209,7 @@ namespace bdapi_auth.Controllers
                 var htmlContent = "<strong>Confirm your email by visiting this link:</strong> https://app.buildarium.com/confirm/" +
                     EmailToken;
                 var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-                //var response = client.SendEmailAsync(msg);
+                var response = client.SendEmailAsync(msg);
 
                 FoundUser.Email = usr.Email;
             }
@@ -263,6 +263,7 @@ namespace bdapi_auth.Controllers
             var htmlContent = "<strong>Change your password by visiting this link:</strong> https://app.buildarium.com/changepassword/" +
                 PasswordToken;
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var response = client.SendEmailAsync(msg);
 
             _userService.SaveChanges();
         }
