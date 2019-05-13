@@ -2,7 +2,7 @@
 
 > Buildarium Auth Backend
 
-![Version](https://img.shields.io/badge/version-1.0.0-black.svg?longCache=true&style=flat-square)
+![Version](https://img.shields.io/badge/version-1.0.1-black.svg?longCache=true&style=flat-square)
 [![Docker Cloud](https://img.shields.io/docker/cloud/build/buildarium/bdapi-auth.svg)](https://cloud.docker.com/u/buildarium/repository/docker/buildarium/bdapi-auth)
 <!-- [![Uptime Robot ratio (30 days)](https://img.shields.io/uptimerobot/ratio/m781258374-4099c727e3e333d16b40f870.svg?style=flat-square)](https://status.indie.casa) -->
 <!-- [![Deployment](https://img.shields.io/badge/deployment-gcloud-1B9CE2.svg?longCache=true&style=flat-square)](http://cloud.google.com/) -->
