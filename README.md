@@ -25,6 +25,7 @@
       - [Helpful Commands](#helpful-commands)
   - [Features](#features)
   - [Documentation](#documentation)
+    - [Updating Remote PostgreSQL Database](#updating-remote-postgresql-database)
   - [Tests](#tests)
     - [Running unit tests](#running-unit-tests)
     - [Linting](#linting)
@@ -84,6 +85,12 @@ $ git checkout [BRANCH]
 
 *WIP*
 <!-- Found [here](https://icapi-network-dot-indiecasa-core.appspot.com/docs) -->
+
+### Updating Remote PostgreSQL Database
+
+Generate a migration: `dotnet ef migrations add initial`
+
+Get SQL script: `dotnet ef migrations script`
 
 ## Tests
 
