@@ -28,8 +28,18 @@ namespace bdapi_auth
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string PostgresConnection;
+            if (Environment.GetEnvironmentVariable("ENV") == "prod")
+            {
+                string template = $"Server=buildarium.postgres.database.azure.com;Database=auth;Port=5432;User Id={0};Password={1};Ssl Mode=Require;";
+                PostgresConnection = string.Format(template, Environment.GetEnvironmentVariable("POSTGRESUSER"), Environment.GetEnvironmentVariable("POSTGRESPASS"));
+            }
+            else
+            {
+                PostgresConnection = Configuration.GetConnectionString("DefaultConnection");
+            }
             services.AddDbContext<UserService>(options =>
-               options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
+               options.UseNpgsql(PostgresConnection)
             );
             services.AddMvc();
         }
