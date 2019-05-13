@@ -12,13 +12,25 @@ services:
       - "5205:80"
     environment:
       - ENV=dev
+    env_file:
+      - .env
   db:
     image: postgres
     restart: always
     environment:
       POSTGRES_PASSWORD: postup
+    ports:
+      - 5432:5432
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    links:
+      - db
+    entrypoint: [ "./wait-for-it/wait-for-it.sh", "db:5432", "--", "dotnet", "ef", "database", "update" ]
+    

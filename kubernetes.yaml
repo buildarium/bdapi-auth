@@ -2,28 +2,28 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: bdapi-kits
+  name: bdapi-auth
   annotations:
     getambassador.io/config: |
       ---
       apiVersion: ambassador/v1
       kind:  Mapping
-      name:  bdapi-kits_mapping
-      prefix: /kit/
-      rewrite: /kit/
-      service: bdapi-kits
+      name:  bdapi-auth_mapping
+      prefix: /auth/
+      rewrite: /auth/
+      service: bdapi-auth
 spec:
   selector:
-    app: bdapi-kits
+    app: bdapi-auth
   ports:
   - port: 80
-    name: http-bdapi-kits
+    name: http-bdapi-auth
     targetPort: http-api
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: bdapi-kits
+  name: bdapi-auth
 spec:
   replicas: 1
   strategy:
@@ -31,25 +31,30 @@ spec:
   template:
     metadata:
       labels:
-        app: bdapi-kits
+        app: bdapi-auth
     spec:
       containers:
-      - name: bdapi-kits
-        image: buildarium/bdapi-kits:latest
+      - name: bdapi-auth
+        image: buildarium/bdapi-auth:latest
         imagePullPolicy: "Always"
         env:
         - name: ENV
           value: "prod"
-        - name: DBUSER
+        - name: POSTGRESUSER
           valueFrom:
             secretKeyRef:
               name: bdapi-secret
-              key: neouser
-        - name: DBPASS
+              key: postgresuser
+        - name: POSTGRESPASS
           valueFrom:
             secretKeyRef:
               name: bdapi-secret
-              key: neopass
+              key: postgrespass
+        - name: SENDGRID_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: bdapi-secret
+              key: sendgridapikey
         ports:
         - name: http-api
           containerPort: 80

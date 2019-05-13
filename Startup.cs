@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using bdapi_auth.Models;
+using Microsoft.EntityFrameworkCore;
+using bdapi_auth.Services;
 
 namespace bdapi_auth
 {
@@ -25,7 +28,20 @@ namespace bdapi_auth
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            string PostgresConnection;
+            if (Environment.GetEnvironmentVariable("ENV") == "prod")
+            {
+                string template = $"Server=buildarium.postgres.database.azure.com;Database=auth;Port=5432;User Id={0};Password={1};Ssl Mode=Require;";
+                PostgresConnection = string.Format(template, Environment.GetEnvironmentVariable("POSTGRESUSER"), Environment.GetEnvironmentVariable("POSTGRESPASS"));
+            }
+            else
+            {
+                PostgresConnection = Configuration.GetConnectionString("DefaultConnection");
+            }
+            services.AddDbContext<UserService>(options =>
+               options.UseNpgsql(PostgresConnection)
+            );
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,10 +54,10 @@ namespace bdapi_auth
             else
             {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                //app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
