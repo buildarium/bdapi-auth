@@ -73,17 +73,20 @@ namespace bdapi_auth.Controllers
             _userService.SaveChanges();
 
             // Send confirmation email
-            var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
-            var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("buck@buildarium.com", "Buck Tower");
-            var subject = "Confirm your Buildarium account, " + usr.FirstName;
-            var to = new EmailAddress(usr.Email, usr.FirstName + " " + usr.LastName);
-            var plainTextContent = "Confirm your email by visiting this link: https://app.buildarium.com/confirm/" +
-                EmailToken;
-            var htmlContent = "<strong>Confirm your email by visiting this link:</strong> https://app.buildarium.com/confirm/" +
-                EmailToken;
-            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-            var response = client.SendEmailAsync(msg);
+            if (Environment.GetEnvironmentVariable("ENV") == "prod")
+            {
+                var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+                var client = new SendGridClient(apiKey);
+                var from = new EmailAddress("buck@buildarium.com", "Buck Tower");
+                var subject = "Confirm your Buildarium account, " + usr.FirstName;
+                var to = new EmailAddress(usr.Email, usr.FirstName + " " + usr.LastName);
+                var plainTextContent = "Confirm your email by visiting this link: https://app.buildarium.com/confirm/" +
+                    EmailToken;
+                var htmlContent = "<strong>Confirm your email by visiting this link:</strong> https://app.buildarium.com/confirm/" +
+                    EmailToken;
+                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+                var response = client.SendEmailAsync(msg);
+            }
         }
 
         // POST auth/signin
@@ -199,17 +202,20 @@ namespace bdapi_auth.Controllers
                 EmailToken = EmailToken.Replace("/", "");
 
                 // Send email
-                var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
-                var client = new SendGridClient(apiKey);
-                var from = new EmailAddress("buck@buildarium.com", "Buck Tower");
-                var subject = "Confirm your Buildarium account, " + usr.FirstName;
-                var to = new EmailAddress(usr.Email, usr.FirstName + " " + usr.LastName);
-                var plainTextContent = "Confirm your email by visiting this link: https://app.buildarium.com/confirm/" +
-                    EmailToken;
-                var htmlContent = "<strong>Confirm your email by visiting this link:</strong> https://app.buildarium.com/confirm/" +
-                    EmailToken;
-                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-                var response = client.SendEmailAsync(msg);
+                if (Environment.GetEnvironmentVariable("ENV") == "prod")
+                {
+                    var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+                    var client = new SendGridClient(apiKey);
+                    var from = new EmailAddress("buck@buildarium.com", "Buck Tower");
+                    var subject = "Confirm your Buildarium account, " + usr.FirstName;
+                    var to = new EmailAddress(usr.Email, usr.FirstName + " " + usr.LastName);
+                    var plainTextContent = "Confirm your email by visiting this link: https://app.buildarium.com/confirm/" +
+                        EmailToken;
+                    var htmlContent = "<strong>Confirm your email by visiting this link:</strong> https://app.buildarium.com/confirm/" +
+                        EmailToken;
+                    var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+                    var response = client.SendEmailAsync(msg);
+                }
 
                 FoundUser.Email = usr.Email;
             }
@@ -253,17 +259,20 @@ namespace bdapi_auth.Controllers
             FoundUser.PasswordChangeToken = PasswordToken;
 
             // Send change password email
-            var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
-            var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("buck@buildarium.com", "Buck Tower");
-            var subject = "Change your Buildarium password, " + FoundUser.FirstName;
-            var to = new EmailAddress(FoundUser.Email, FoundUser.FirstName + " " + FoundUser.LastName);
-            var plainTextContent = "Change your password by visiting this link: https://app.buildarium.com/changepassword/" +
-                PasswordToken;
-            var htmlContent = "<strong>Change your password by visiting this link:</strong> https://app.buildarium.com/changepassword/" +
-                PasswordToken;
-            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-            var response = client.SendEmailAsync(msg);
+            if (Environment.GetEnvironmentVariable("ENV") == "prod")
+            {
+                var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+                var client = new SendGridClient(apiKey);
+                var from = new EmailAddress("buck@buildarium.com", "Buck Tower");
+                var subject = "Change your Buildarium password, " + FoundUser.FirstName;
+                var to = new EmailAddress(FoundUser.Email, FoundUser.FirstName + " " + FoundUser.LastName);
+                var plainTextContent = "Change your password by visiting this link: https://app.buildarium.com/changepassword/" +
+                    PasswordToken;
+                var htmlContent = "<strong>Change your password by visiting this link:</strong> https://app.buildarium.com/changepassword/" +
+                    PasswordToken;
+                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+                var response = client.SendEmailAsync(msg);
+            }
 
             _userService.SaveChanges();
         }
