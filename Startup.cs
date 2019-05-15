@@ -34,6 +34,11 @@ namespace bdapi_auth
                 string template = "Server=buildarium.postgres.database.azure.com;Database=auth;Port=5432;User Id={0};Password={1};Ssl Mode=Require;";
                 PostgresConnection = string.Format(template, Environment.GetEnvironmentVariable("POSTGRESUSER"), Environment.GetEnvironmentVariable("POSTGRESPASS"));
             }
+            else if (Environment.GetEnvironmentVariable("ENV") == "test")
+            {
+                string template = "User ID={0};Password={1};Server=postgres;Port=5432;Database=postgres;Integrated Security=true;Pooling=true;";
+                PostgresConnection = string.Format(template, Environment.GetEnvironmentVariable("POSTGRESUSER"), Environment.GetEnvironmentVariable("POSTGRESPASS"));
+            }
             else
             {
                 PostgresConnection = Configuration.GetConnectionString("DefaultConnection");
