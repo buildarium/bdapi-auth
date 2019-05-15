@@ -21,6 +21,8 @@ namespace bdapi_auth.Controllers
         }
 
         // GET /auth/users
+        // Get a list of all users -- for debugging purposes only
+        // TODO: Remove
         [HttpGet("users")]
         public IEnumerable<User> GetUsers()
         {
@@ -28,6 +30,7 @@ namespace bdapi_auth.Controllers
         }
 
         // GET /auth/id/{id}
+        // Get a user's info based off of their uid
         [HttpGet("id/{id}")]
         public ActionResult<User> GetById(string id)
         {
@@ -35,6 +38,7 @@ namespace bdapi_auth.Controllers
         }
 
         // POST /auth/signup
+        // Create a new user
         [HttpPost("signup")]
         public void PostNewUser([FromBody] NewUser usr)
         {
@@ -90,6 +94,7 @@ namespace bdapi_auth.Controllers
         }
 
         // POST auth/signin
+        // Sign in as a user, receiving an Authorization Token
         [HttpPost("signin")]
         public string PostSignIn(SigninUser usr)
         {
@@ -151,7 +156,20 @@ namespace bdapi_auth.Controllers
             _userService.SaveChanges();
         }
 
+        // GET auth/uid
+        // Get a user's UID based off of a supplied Authorization Token
+        [HttpGet("uid")]
+        public string GetMyUid()
+        {
+            AuthorizationToken AuthTok = _userService.AuthorizationTokens.Single(
+                t => t.Uid == Request.Headers["Authorization"]
+            );
+                
+            return AuthTok.UserUid;
+        }
+        
         // GET auth/me
+        // Get your user info
         [HttpGet("me")]
         public NewUser GetMe()
         {
@@ -171,6 +189,7 @@ namespace bdapi_auth.Controllers
         }
 
         // PUT auth/me
+        // Change your info
         [HttpPut("me")]
         public void PutMe([FromBody] NewUser usr)
         {
@@ -244,6 +263,7 @@ namespace bdapi_auth.Controllers
         }
 
         // POST auth/forgot
+        // Trigger forgot password process
         [HttpPost("forgot")]
         public void TriggerForgotPassword()
         {
@@ -278,6 +298,7 @@ namespace bdapi_auth.Controllers
         }
 
         // PUT auth/forgot
+        // Reset password
         [HttpPut("forgot/{token}")]
         public void ChangeForgotPassword(string token)
         {
@@ -294,6 +315,7 @@ namespace bdapi_auth.Controllers
         }
 
         // PUT auth/email
+        // Confirm email
         [HttpPut("email/{token}")]
         public void ConfirmEmail(string token)
         {
