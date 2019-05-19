@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using bdapi_auth.Models;
 using bdapi_auth.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -34,13 +35,14 @@ namespace bdapi_auth.Controllers
         [HttpGet("id/{id}")]
         public ActionResult<User> GetById(string id)
         {
+            // TODO: Don't return so much unnecessary shit
             return _userService.Users.Find(id);
         }
 
         // POST /auth/signup
         // Create a new user
         [HttpPost("signup")]
-        public void PostNewUser([FromBody] NewUser usr)
+        public BasicUser PostNewUser([FromBody] NewUser usr)
         {
             // Does a user with this email or username already exist?
             User DupCheckEmail = _userService.Users.SingleOrDefault(u => u.Email == usr.Email);
@@ -91,15 +93,37 @@ namespace bdapi_auth.Controllers
                 var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
                 var response = client.SendEmailAsync(msg);
             }
+
+            User CreatedUser = _userService.Users.Single(u => u.Username == usr.Username);
+
+            return new BasicUser
+            {
+                Uid = CreatedUser.Uid,
+                Email = CreatedUser.Email,
+                Username = CreatedUser.Username,
+                FirstName = CreatedUser.FirstName,
+                LastName = CreatedUser.LastName
+            };
         }
 
         // POST auth/signin
         // Sign in as a user, receiving an Authorization Token
         [HttpPost("signin")]
-        public string PostSignIn(SigninUser usr)
+        public Dictionary<string, object> PostSignIn(SigninUser usr)
         {
             // Find user with username
-            User FoundUser = _userService.Users.Single(u => u.Username == usr.Username);
+            User FoundUser = _userService.Users.SingleOrDefault(u => u.Username == usr.Username);
+
+            // If that username doesn't exist
+            if (FoundUser == null)
+            {
+                // Return 401
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return new Dictionary<string, object>
+                {
+                    { "error", "Incorrect signin credentials" }
+                };
+            }
 
             // Clear expired tokens -- doesn't actually execute until SaveChanges()
             var ExpTokens = _userService.AuthorizationTokens
@@ -113,15 +137,20 @@ namespace bdapi_auth.Controllers
                 _userService.Remove(token);
             }
 
-            // Must have confirmed email
-            if (!FoundUser.EmailConfirmed)
-            {
-                throw new ArgumentException();
-            }
-
             // Check if the passwords match
             if (BCrypt.Net.BCrypt.Verify(usr.Password, FoundUser.Password))
             {
+                // Must have confirmed email
+                if (!FoundUser.EmailConfirmed)
+                {
+                    // Return 400
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return new Dictionary<string, object>
+                    {
+                        { "error", "Must confirm email before signin" }
+                    };
+                }
+
                 // Correct password -- create a new token
                 _userService.Add(new AuthorizationToken
                 {
@@ -133,12 +162,30 @@ namespace bdapi_auth.Controllers
 
                 // TODO: return the newly minted token, not just the first
                 // Return token
-                return _userService.AuthorizationTokens.FirstOrDefault(t => t.User == FoundUser).Uid;
+                string Token = _userService.AuthorizationTokens.FirstOrDefault(t => t.User == FoundUser).Uid;
+                BasicUser RetUser = new BasicUser
+                {
+                    Uid = FoundUser.Uid,
+                    Email = FoundUser.Email,
+                    Username = FoundUser.Username,
+                    FirstName = FoundUser.FirstName,
+                    LastName = FoundUser.LastName
+                };
+                return new Dictionary<string, object>
+                {
+                    { "user", FoundUser },
+                    { "token", Token }
+                };
             }
             else
             {
-                // Incorrect password
-                throw new ArgumentException();
+                // Wrong password
+                // Return 401
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return new Dictionary<string, object>
+                {
+                    { "error", "Incorrect signin credentials" }
+                };
             }
         }
 
@@ -314,6 +361,7 @@ namespace bdapi_auth.Controllers
             _userService.SaveChanges();
         }
 
+        // TODO: Make it a get and return a string
         // PUT auth/email
         // Confirm email
         [HttpPut("email/{token}")]
