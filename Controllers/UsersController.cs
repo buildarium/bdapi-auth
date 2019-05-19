@@ -173,7 +173,7 @@ namespace bdapi_auth.Controllers
                 };
                 return new Dictionary<string, object>
                 {
-                    { "user", FoundUser },
+                    { "user", RetUser },
                     { "token", Token }
                 };
             }
