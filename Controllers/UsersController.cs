@@ -162,7 +162,7 @@ namespace bdapi_auth.Controllers
 
                 // TODO: return the newly minted token, not just the first
                 // Return token
-                string Token = _userService.AuthorizationTokens.FirstOrDefault(t => t.User == FoundUser).Uid;
+                AuthorizationToken Token = _userService.AuthorizationTokens.FirstOrDefault(t => t.User == FoundUser);
                 BasicUser RetUser = new BasicUser
                 {
                     Uid = FoundUser.Uid,
@@ -174,7 +174,8 @@ namespace bdapi_auth.Controllers
                 return new Dictionary<string, object>
                 {
                     { "user", RetUser },
-                    { "token", Token }
+                    { "token", Token.Uid },
+                    { "expiration", Token.ExpirationDate }
                 };
             }
             else
