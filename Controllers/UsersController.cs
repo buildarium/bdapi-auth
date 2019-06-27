@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using bdapi_auth.Models;
 using bdapi_auth.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -11,6 +12,7 @@ using SendGrid.Helpers.Mail;
 namespace bdapi_auth.Controllers
 {
     [Route("auth")]
+    [EnableCors("MyPolicy")]
     [ApiController]
     public class UsersController : ControllerBase
     {
